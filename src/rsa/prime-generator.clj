@@ -17,7 +17,7 @@
 (defn soe-test-num
   "Test the number against all the primes in the sieve"
   [n sieve]
-  (nil? (some (fn [x] (= (mod n x) 0)) sieve)))
+  (nil? (some (fn [x] (and (= (mod n x) 0) (not= n x))) sieve)))
 
 (def sieve 
   "A Sieve of Eratosthenes containing the primes below 10000"
@@ -36,8 +36,8 @@
   "Performs the rabin-miller primality test"
   [n]
   (let [[d s] (mr-create-components n)
-        a (util/rand-big-int (- (.bitLength n) 1))]
-    (if (= 1 (util/pow-mod a d n 1)) true
+               a (util/random-big-int (.bitLength n))]
+    #break(if (= 1 (util/pow-mod a d n 1)) true
         (loop [r 0]
           (cond
             (>= r s) false
@@ -55,8 +55,12 @@
 (defn gen-prob-prime-helper
   "Generates a n bit long number that is probably prime (1 - 2^-23)"
   [bits sieve]
-  (loop [n (util/rand-big-int bits)]
+  (loop [n (util/get-prime-candidate bits)]
     (if (prime? n 23 sieve) n
         (recur (+ n 2)))))
 
-(defn gen-prob-prime [bits] (gen-prob-prime-helper bits sieve))
+(defn gen-prob-prime [bits] 
+  (when (> bits 1)(gen-prob-prime-helper bits sieve)))
+
+(gen-prob-prime 3)
+(.toString 2 (util/rand-big-int 2))
