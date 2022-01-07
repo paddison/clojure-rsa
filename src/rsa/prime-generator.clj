@@ -37,7 +37,7 @@
   [n]
   (let [[d s] (mr-create-components n)
                a (util/random-big-int (.bitLength n))]
-    #break(if (= 1 (util/pow-mod a d n 1)) true
+    (if (= 1 (util/pow-mod a d n 1)) true
         (loop [r 0]
           (cond
             (>= r s) false
@@ -53,14 +53,14 @@
     (every? identity (repeatedly repeats #(mr-primality-test n)))))
 
 (defn gen-prob-prime-helper
-  "Generates a n bit long number that is probably prime (1 - 2^-23)"
+  "Generates a **n** bit long number that is prime with 
+   a probabilty of about `(1 - 2^-23)`"
   [bits sieve]
   (loop [n (util/get-prime-candidate bits)]
     (if (prime? n 23 sieve) n
-        (recur (+ n 2)))))
+        (recur (util/get-prime-candidate bits)))))
 
 (defn gen-prob-prime [bits] 
   (when (> bits 1)(gen-prob-prime-helper bits sieve)))
 
-(gen-prob-prime 3)
-(.toString 2 (util/rand-big-int 2))
+(gen-prob-prime 1024)

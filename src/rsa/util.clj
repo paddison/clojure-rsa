@@ -1,7 +1,9 @@
 (ns rsa.util
   (:import java.util.Random java.math.BigInteger))
 
-(defn pow-mod [b exp m result]
+(defn pow-mod
+  "Calculates `b^exp mod m` using the right-to-left binary method. [Wikipedia](https://en.wikipedia.org/wiki/Modular_exponentiation#Right-to-left_binary_method)"
+  [b exp m result]
   (if (>= exp 1)
     (recur (mod (* b b) m)
            (quot exp 2)
@@ -11,7 +13,9 @@
              result))
     result))
 
-(defn random-big-int [bits]
+(defn random-big-int
+  "Creates a random number in the range of `1 to 2^(n - 1) - 1`."
+  [bits]
   (inc (BigInteger. (dec bits) (Random.))))
 
 (defn get-prime-candidate
