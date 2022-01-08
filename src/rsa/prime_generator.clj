@@ -62,5 +62,3 @@
 
 (defn gen-prob-prime [bits] 
   (when (> bits 1)(gen-prob-prime-helper bits sieve)))
-
-(gen-prob-prime 1024)

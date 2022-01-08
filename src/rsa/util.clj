@@ -30,3 +30,18 @@
                      (concat
                       [(pow-mod 2 (dec bits) 255 1)]
                       (apply vector (repeat (quot (dec bits) 8) 0)))))))
+
+(defn gcd [a b]
+  (if (= b 0) a
+      (recur b (mod a b))))
+
+(defn extended-gcd [old_r r old_s s]
+  (if (= r 0) old_s
+      (recur r (- old_r (* (quot old_r r) r)) s (- old_s (* (quot old_r r) s)))))
+
+(defn divide-by-two [[a b]]
+  (vector (quot a 2) (quot b 2)))
+
+(defn get-minimal-trailing-zeros [a b]
+  (count (take-while (fn [[a b]] (and (= (mod a 2) 0) (= (mod b 2) 0)))
+                     (iterate divide-by-two [a b]))))
