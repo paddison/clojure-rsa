@@ -2,38 +2,46 @@
   (:gen-class)
   (:require [rsa.rsa :as rsa]))
 
-(def dir "/Users/patrickbaumann/Documents/hdm/funcProg/project/rsa/my-key.ckey")
-
 (defn verify [bits]
-  (and (= (mod (int bits) 128) 0) (>= bits 128)))
+  (when (not (and (= (mod (int bits) 128) 0) (>= bits 128)))
+    (throw 
+     (ex-info "Invalid bit size, must be multiple of 128 and at least 128." {:bits bits})))
+  )
 
 (defn write-keys-file [[key-name bits]]
-  (let [bits (Integer/parseInt bits)]
-    (if (verify bits)
+  (try
+    (let [bits (Integer/parseInt bits)]
+      (verify bits)
+      (println "Generating key pair...")
       (spit (str key-name ".ckey") (rsa/generate-key-pair bits))
-      (println "Invalid bit length, must be multiple of 128 and at least 128."))))
+      (println "Done, name of the file is:" (str key-name ".ckey")))
+    (catch Exception _ (println "Unable to parse value for key length. It has to be numeric, at least 128 and a multiple of 128.")))
+  )
 
 (defn read-keys-file [key-file]
   (read-string (slurp key-file)))
 
 (defn encrypt-message [[key-file msg]]
   (let [pk (:public-key (read-keys-file key-file))]
-    (println (rsa/encrypt-string msg pk))))
+    (println 
+     (re-find #"\d+" (str (rsa/encrypt-string msg pk)))))) ; trim of the trailing N
 
 (defn decrypt-cipher [[key-file c]]
   (let [sk (:secret-key (read-keys-file key-file))]
     (println (rsa/decrypt-string (BigInteger. c) sk))))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Main function."
   [& args]
-  (cond
-    (= (first args) "generate") (-> (rest args)
-                                    (write-keys-file))
-    (= (first args) "encrypt") (-> (rest args)
-                                   (encrypt-message))
-    (= (first args) "decrypt") (-> (rest args)
-                                   (decrypt-cipher))
-    (= (first args) "help") (println 
-                             "Usage:\ngenerate filename bitsize\nencrypt keyfile message\ndecrypt keyfile cipher")
-    :else (println "invalid commands, use help to display information.")))
+  (case (first args)
+    "generate" (-> (rest args)
+                   (write-keys-file))
+    "encrypt" (-> (rest args)
+                  (encrypt-message))
+    "decrypt" (-> (rest args)
+                  (decrypt-cipher))
+    "help" (println "Usage:\ngenerate filename bitsize\nencrypt keyfile message\ndecrypt keyfile cipher")
+    (println "invalid commands, use help to display information.")))
+
+
+(re-find #"\d+" "1234D")
