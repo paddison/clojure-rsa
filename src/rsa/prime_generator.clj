@@ -24,7 +24,7 @@
   [n sieve]
   (nil? (some (fn [x] (and (= (mod n x) 0) (not= n x))) sieve)))
 
-(def sieve
+(def SIEVE
   "A Sieve of Eratosthenes containing the primes below 10000."
   (soe-primes-below-n 10000))
 
@@ -32,8 +32,9 @@
 ;; Miller-Rabin Primality Test ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn mr-create-components [n]
+(defn mr-create-components
   "Helper to create the components `d` and `s` needed for the Miller-Rabin test."
+  [n]
   (loop [d (- n 1) s 0]
     (if (= (mod d 2) 1) [d s]
         (recur (quot d 2) (inc s)))))
@@ -71,6 +72,6 @@
 
 (defn gen-prob-prime
   "Generates a **n** bit long number that is prime with 
-   a probabilty of about `(1 - 2^-23)`"
+   a high probabilty."
   ([bits]
-   (first (filter #(prime? % 23 sieve) (repeatedly #(util/get-prime-candidate bits))))))
+   (first (filter #(prime? % 23 SIEVE) (repeatedly #(util/get-prime-candidate bits))))))
