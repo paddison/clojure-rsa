@@ -6,7 +6,7 @@ A simple implementation of an rsa key-generator with encryption and decryption.
 
 Make sure to have leiningen installed. Then execute the commands:
 
-`$lein run generate 'filename' key-size` to create a new keypair which gets stored in a file with name 'filename'.
+`$lein run generate 'filename' key-size` to create a new keypair which gets stored in a file with name 'filename'. Key-sizes must be an integer multiple of 128.
 
 `$lein run encrypt 'keyfile' 'message'` to encrypt a message 'message' with the public key from 'keyfile'.
 
